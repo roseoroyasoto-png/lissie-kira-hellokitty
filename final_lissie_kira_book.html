@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lissie &amp; Kira — Un libro especial</title>
+<style>
+  :root{
+    --bg:#ffe9f2;
+    --accent:#ff6fa3;
+    --muted:#f7d9e6;
+    --text:#5a2b4a;
+    --card:#fff;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family: "Arial Rounded MT Bold", "Helvetica Rounded", "Trebuchet MS", "Segoe UI", Roboto, Arial, sans-serif; -webkit-font-smoothing:antialiased;}
+  body{
+    background: radial-gradient(circle at 10% 10%, rgba(255,255,255,0.6), transparent 10%),
+                linear-gradient(180deg,var(--bg), #fff);
+    display:flex;align-items:center;justify-content:center;padding:20px;
+    color:var(--text);
+  }
+  .container{ width:920px; max-width:96vw; height:680px; max-height:92vh; perspective:1600px; position:relative; }
+  .book{ width:100%; height:100%; position:relative; transform-style:preserve-3d; }
+  .page{ width:100%; height:100%; position:absolute; left:0; top:0; transform-origin:left center; transition: transform 700ms cubic-bezier(.2,.85,.3,1); border-radius:18px; overflow:hidden; box-shadow:0 18px 40px rgba(90,43,74,0.08); background: linear-gradient(180deg,var(--card), #fff); }
+  .cover{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding:36px; gap:12px; text-align:center; }
+  .title{ font-size:36px; margin:0; letter-spacing:0.6px; color:var(--text); }
+  .subtitle{ font-size:18px; margin:0; color:#8a476b; }
+  .intro{ font-size:16px; color:#7a4972; max-width:78%; margin-top:6px; }
+  .art{ width:220px; height:220px; display:flex; align-items:center; justify-content:center; border-radius:999px; background:linear-gradient(180deg,#fff,#fff0); box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+  .controls{ position:absolute; bottom:18px; left:50%; transform:translateX(-50%); display:flex; gap:12px; z-index:40; }
+  button{ background:linear-gradient(180deg,var(--accent),#ff4a86); color:white; border:0; padding:10px 16px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow:0 8px 20px rgba(90,43,74,0.12); }
+  .muted{ background:linear-gradient(180deg,#ddd,#ccc); color:#666; }
+  .hearts{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:2; }
+  .heart{ position:absolute; width:30px; height:30px; transform:translate(-50%,-50%); opacity:0.95; animation:float 6s linear infinite; }
+  @keyframes float{ 0%{transform: translateY(12vh) scale(0.8);} 50%{transform: translateY(-30vh) scale(1.05);} 100%{transform: translateY(-85vh) scale(0.6); opacity:0;} }
+
+  /* Text pages */
+  .text-page{ padding:36px 48px; display:flex; flex-direction:column; gap:18px; }
+  .text-page h2{ margin:0; font-size:26px; color:var(--text); }
+  .text-page p{ margin:0; font-size:18px; line-height:1.8; color:var(--text); }
+
+  /* page index layering */
+  #cover{ z-index:10; }
+  #page1{ z-index:9; transform-origin:left center; }
+  #page2{ z-index:8; transform-origin:left center; }
+  #back{ z-index:7; transform-origin:right center; }
+
+  /* flipped state */
+  .flipped{ transform: rotateY(-180deg); }
+
+  /* responsive */
+  @media (max-width:760px){
+    .title{ font-size:28px; }
+    .art{ width:160px; height:160px; }
+    .text-page p{ font-size:16px; }
+  }
+</style>
+</head>
+<body>
+<div class="container" aria-live="polite">
+  <div class="book" id="book">
+    <!-- Cover / Intro -->
+    <section class="page" id="cover" role="region" aria-label="Portada">
+      <div class="cover">
+        <div class="art" aria-hidden="true">
+          <!-- Smiling cat SVG (original, friendly and cute) -->
+          <svg viewBox="0 0 200 200" width="180" height="180" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="200" height="200" rx="36" fill="#fff0"/>
+            <g transform="translate(0,6)">
+              <ellipse cx="100" cy="120" rx="70" ry="60" fill="#fff"/>
+              <circle cx="70" cy="60" r="26" fill="#fff"/>
+              <circle cx="130" cy="60" r="26" fill="#fff"/>
+              <circle cx="78" cy="118" r="7" fill="#ff6f9a"/>
+              <circle cx="122" cy="118" r="7" fill="#ff6f9a"/>
+              <path d="M86 94 q14 18 28 0" stroke="#5a2b4a" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+              <circle cx="100" cy="96" r="8" fill="#ff6f9a"/>
+              <g transform="translate(126,36) rotate(-12)">
+                <ellipse cx="0" cy="0" rx="16" ry="10" fill="#ff6fa3"/>
+                <ellipse cx="30" cy="-4" rx="16" ry="10" fill="#ff6fa3"/>
+                <circle cx="15" cy="0" r="7" fill="#ffd1e6"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <h1 class="title">Lissie &amp; Kira</h1>
+        <p class="subtitle">Un libro muy especial para mi amiga Kira</p>
+        <p class="intro">Pulsa "Abrir libro" para pasar las páginas. La música kawaii comenzará suavemente.</p>
+      </div>
+      <div class="hearts" id="hearts"></div>
+    </section>
+
+    <!-- PAGE 1 - first half of the dedication -->
+    <article class="page text-page" id="page1" role="article" aria-label="Página 1">
+      <div style="display:flex; gap:22px; align-items:flex-start;">
+        <!-- Left illustration -->
+        <div style="min-width:260px; display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="200" height="200" rx="24" fill="#fff0"/>
+            <g transform="translate(0,8)">
+              <ellipse cx="100" cy="118" rx="66" ry="56" fill="#fff"/>
+              <circle cx="68" cy="56" r="24" fill="#fff"/>
+              <circle cx="132" cy="56" r="24" fill="#fff"/>
+              <circle cx="76" cy="116" r="6" fill="#ff6f9a"/>
+              <circle cx="124" cy="116" r="6" fill="#ff6f9a"/>
+              <path d="M86 90 q14 16 28 0" stroke="#5a2b4a" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <circle cx="100" cy="92" r="7" fill="#ff6f9a"/>
+              <!-- small flower detail -->
+              <g transform="translate(150,30)">
+                <circle cx="0" cy="0" r="10" fill="#ffd1e6"/>
+                <circle cx="14" cy="0" r="8" fill="#ff6fa3"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <!-- Right text block -->
+        <div style="flex:1;">
+          <h2>Querida Kira,</h2>
+          <p>Desde aquel primer ciclo en que nos conocimos, supe que nuestra amistad sería especial. Hemos pasado por tantas cosas juntas —las buenas, las locas y también las peores—, pero siempre una al lado de la otra.</p>
+          <p>Gracias por ser esa persona que me entiende, me apoya y me hace reír incluso cuando todo parece estar en contra. Te quiero muchísimo, y no cambiaría por nada todos los momentos que hemos compartido.</p>
+          <p>Eres mi amiga del alma, mi compañera de vida y mi hermana elegida.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- PAGE 2 - second half of the dedication -->
+    <article class="page text-page" id="page2" role="article" aria-label="Página 2">
+      <div style="display:flex; gap:22px; align-items:flex-start;">
+        <!-- Left text block -->
+        <div style="flex:1;">
+          <h2>Para mi mejor amiga del alma 💌</h2>
+          <p>No sabes cuánto te quiero y lo agradecida que estoy por tenerte en mi vida. Eres esa persona que siempre está, en las risas, en los enojos, en los días buenos y en los difíciles también.</p>
+          <p>Gracias por tu cariño, tu paciencia y por entenderme sin que tenga que decir nada. Eres más que una amiga, eres mi hermana del corazón. 💕</p>
+          <p style="margin-top:18px;"><strong>Con mucho amor,</strong></p>
+          <p style="font-size:20px; margin-top:6px;"><strong>Lissie 💖</strong></p>
+        </div>
+        <!-- Right illustration (Hello Kitty hugging a teddy) -->
+        <div style="min-width:260px; display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="220" height="220" rx="20" fill="#fff0"/>
+            <g transform="translate(10,10)">
+              <!-- cat body -->
+              <ellipse cx="100" cy="120" rx="66" ry="56" fill="#fff"/>
+              <circle cx="70" cy="56" r="24" fill="#fff"/>
+              <circle cx="130" cy="56" r="24" fill="#fff"/>
+              <circle cx="76" cy="116" r="6" fill="#ff6f9a"/>
+              <circle cx="124" cy="116" r="6" fill="#ff6f9a"/>
+              <path d="M86 90 q14 16 28 0" stroke="#5a2b4a" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <circle cx="100" cy="92" r="7" fill="#ff6f9a"/>
+              <!-- teddy -->
+              <g transform="translate(60,120) scale(0.9)">
+                <ellipse cx="40" cy="36" rx="26" ry="28" fill="#f4c7d9" />
+                <circle cx="25" cy="22" r="7" fill="#8a476b"/>
+                <circle cx="55" cy="22" r="7" fill="#8a476b"/>
+                <path d="M33 40 q12 12 24 0" stroke="#8a476b" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </g>
+              <!-- small bow on head -->
+              <g transform="translate(128,34) rotate(-14)">
+                <ellipse cx="0" cy="0" rx="16" ry="10" fill="#ff6fa3"/>
+                <ellipse cx="30" cy="-4" rx="16" ry="10" fill="#ff6fa3"/>
+                <circle cx="15" cy="0" r="6" fill="#ffd1e6"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </article>
+
+    <!-- BACK cover -->
+    <section class="page" id="back" role="region" aria-label="Contraportada">
+      <div class="cover">
+        <h2 style="margin:0; color:#8a476b;">Siempre juntas</h2>
+        <p style="max-width:80%; text-align:center; color:#845072;">Nuestra amistad es un lazo eterno lleno de dulzura y cariño.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Controls -->
+  <div class="controls" role="navigation" aria-label="Controles del libro">
+    <button id="openBtn" aria-controls="book">Abrir libro</button>
+    <button id="prevBtn" class="muted" style="display:none">Atrás</button>
+    <button id="nextBtn" class="muted" style="display:none">Siguiente</button>
+    <button id="muteBtn" class="muted" style="display:none">🔊 Silenciar</button>
+  </div>
+</div>
+
+<script>
+// Page flip logic without repeated text, clear ordering
+const cover = document.getElementById('cover');
+const page1 = document.getElementById('page1');
+const page2 = document.getElementById('page2');
+const back = document.getElementById('back');
+const openBtn = document.getElementById('openBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const muteBtn = document.getElementById('muteBtn');
+const hearts = document.getElementById('hearts');
+
+let state = 0; // 0 closed, 1 open->page1, 2 page2, 3 closed back
+function updateUI(){
+  if(state===0){
+    openBtn.style.display='inline-block';
+    prevBtn.style.display='none';
+    nextBtn.style.display='none';
+    muteBtn.style.display='none';
+  } else {
+    openBtn.style.display='none';
+    prevBtn.style.display='inline-block';
+    nextBtn.style.display='inline-block';
+    muteBtn.style.display='inline-block';
+    prevBtn.classList.remove('muted'); nextBtn.classList.remove('muted'); muteBtn.classList.remove('muted');
+  }
+}
+updateUI();
+
+// hearts generator
+function createHeart(x,y,size,delay){
+  const el = document.createElement('div');
+  el.className='heart';
+  el.style.left = x + '%';
+  el.style.top = y + '%';
+  el.style.width = (26 + size) + 'px';
+  el.style.height = (26 + size) + 'px';
+  el.style.animationDelay = (Math.random()*3 + delay)+'s';
+  el.innerHTML = `<svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 21s-8-6.6-9.5-10A5.2 5.2 0 0 1 4 6.5 5.5 5.5 0 0 1 12 8.7 5.5 5.5 0 0 1 20 6.5a5.2 5.2 0 0 1 1.5 4.5C20 14.4 12 21 12 21z" fill="#ff6fa3"/></svg>`;
+  document.querySelector('.hearts').appendChild(el);
+  setTimeout(()=> el.remove(), 10000);
+}
+setInterval(()=> createHeart( 80 - Math.random()*60, 92, Math.random()*28, 0 ), 1400);
+setTimeout(()=> { for(let i=0;i<6;i++) createHeart(30+Math.random()*60,92,Math.random()*20,i*0.2);} ,600);
+
+// Flip handlers
+openBtn.addEventListener('click', ()=> {
+  cover.classList.add('flipped');
+  state = 1;
+  updateUI();
+  playKawaii();
+  // reveal nav controls
+  prevBtn.style.display='inline-block'; nextBtn.style.display='inline-block'; muteBtn.style.display='inline-block';
+});
+
+nextBtn.addEventListener('click', ()=> {
+  if(state===1){
+    page1.classList.add('flipped');
+    state = 2;
+  } else if(state===2){
+    page2.classList.add('flipped');
+    state = 3;
+  }
+});
+
+prevBtn.addEventListener('click', ()=> {
+  if(state===3){
+    page2.classList.remove('flipped');
+    state = 2;
+  } else if(state===2){
+    page1.classList.remove('flipped');
+    state = 1;
+  } else if(state===1){
+    cover.classList.remove('flipped');
+    state = 0;
+    stopKawaii();
+    updateUI();
+  }
+});
+
+// Kawaii music using Web Audio API (bells, pluck, soft pads)
+let audioCtx, masterGain, isPlaying=false, loopHandle;
+function playKawaii(){
+  if(isPlaying) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0.06;
+  masterGain.connect(audioCtx.destination);
+
+  // note pattern (pleasant, gentle)
+  const seq = [
+    {t:0, f:880, d:0.34},
+    {t:0.36, f:990, d:0.34},
+    {t:0.72, f:880, d:0.34},
+    {t:1.08, f:740, d:0.34},
+    {t:1.44, f:660, d:0.6},
+    {t:2.04, f:880, d:0.6}
+  ];
+
+  function playOnce(offset){
+    seq.forEach(n => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type='sine'; o.frequency.value = n.f;
+      o.connect(g); g.connect(masterGain);
+      const start = audioCtx.currentTime + offset + n.t;
+      o.start(start);
+      g.gain.setValueAtTime(0.0, start);
+      g.gain.linearRampToValueAtTime(0.08, start+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, start + n.d - 0.01);
+      o.stop(start + n.d);
+
+      // soft pluck
+      const pl = audioCtx.createOscillator();
+      const pg = audioCtx.createGain();
+      pl.type='triangle'; pl.frequency.value = n.f * 0.5;
+      pl.connect(pg); pg.connect(masterGain);
+      const pst = start + 0.02;
+      pl.start(pst); pg.gain.setValueAtTime(0.03, pst); pg.gain.exponentialRampToValueAtTime(0.0001, pst + n.d);
+      pl.stop(pst + n.d + 0.01);
+    });
+  }
+  playOnce(0);
+  loopHandle = setInterval(()=> playOnce(0), 2600);
+  isPlaying = true;
+}
+function stopKawaii(){
+  try{ clearInterval(loopHandle); if(masterGain) masterGain.disconnect(); if(audioCtx) audioCtx.close(); }catch(e){}
+  isPlaying=false;
+}
+
+muteBtn.addEventListener('click', ()=> {
+  if(!isPlaying) return;
+  if(masterGain.gain && masterGain.gain.value>0.001){
+    masterGain.gain.value = 0.0;
+    muteBtn.textContent = '🔈 Silenciado';
+  } else {
+    masterGain.gain.value = 0.06;
+    muteBtn.textContent = '🔊 Silenciar';
+  }
+});
+
+// keyboard navigation
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowRight') nextBtn.click();
+  if(e.key === 'ArrowLeft') prevBtn.click();
+  if(e.key === 'Enter' && state===0) openBtn.click();
+});
+
+</script>
+</body>
+</html>
